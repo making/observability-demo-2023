@@ -1,0 +1,80 @@
+adminUser: grafana
+adminPassword: grafana
+testFramework:
+  enabled: false
+ingress:
+  enabled: true
+  hosts:
+  - grafana.127-0-0-1.sslip.io
+  tls:
+  - hosts:
+    - grafana.127-0-0-1.sslip.io
+    secretName: grafana-tls
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - orgId: 1
+      name: Prometheus
+      uid: prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus-server.prometheus.svc.cluster.local
+      isDefault: true
+      editable: true
+      jsonData:
+        exemplarTraceIdDestinations:
+        - datasourceUid: grafana-traces
+          name: trace_id
+          urlDisplayLabel: trace_id
+        httpMethod: POST
+    - name: Loki
+      uid: grafana-logs
+      type: loki
+      access: proxy
+      orgId: 1
+      url: http://loki.loki.svc.cluster.local:3100
+      editable: true
+      jsonData:
+        httpMethod: GET
+        derivedFields:
+        - datasourceUid: grafana-traces
+          matcherRegex: '"traceId":"(\w+)"'
+          name: traceId
+          url: $${__value.raw}
+        timeout: 30
+    - name: Tempo
+      uid: grafana-traces
+      type: tempo
+      access: proxy
+      orgId: 1
+      url: http://tempo.tempo.svc.cluster.local:3100
+      editable: true
+      jsonData:
+        lokiSearch:
+          datasourceUid: grafana-logs
+        nodeGraph:
+          enabled: true
+        serviceMap:
+          datasourceUid: prometheus
+        tracesToLogs:
+          datasourceUid: grafana-logs
+          filterBySpanID: true
+          filterByTraceID: true
+          spanStartTimeShift: '-3h'
+          spanEndTimeShift: '3h'
+          mapTagNamesEnabled: true
+          mappedTags:
+          - key: service.name
+            value: app_kubernetes_io_part_of
+          tags: [ ]
+        tracesToMetrics:
+          datasourceUid: 'prometheus'
+          tags:
+          - key: service.name
+            value: app_kubernetes_io_part_of
+          queries:
+          - name: 'Sample query'
+            query: 'histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{$__tags}[3m])) by (le, app_kubernetes_io_part_of, cluster))'

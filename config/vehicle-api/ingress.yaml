@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vehicle-api
+  annotations:
+    cert-manager.io/cluster-issuer: "selfsigned-cluster-issuer"
+  labels:
+    app.kubernetes.io/part-of: vehicle-api
+spec:
+  tls:
+  - secretName: vehicle-api-tls
+    hosts:
+    - vehicle-api.127-0-0-1.sslip.io
+  rules:
+  - host: vehicle-api.127-0-0-1.sslip.io
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: vehicle-api
+            port:
+              number: 8080
