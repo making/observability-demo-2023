@@ -107,7 +107,7 @@ data:
           - key: service.name
             value: app_kubernetes_io_part_of
           spanEndTimeShift: 3h
-          spanStartTimeShift: 3h
+          spanStartTimeShift: -3h
           tags: []
         tracesToMetrics:
           datasourceUid: prometheus
@@ -123,6 +123,45 @@ data:
       type: tempo
       uid: grafana-traces
       url: http://tempo.tempo.svc.cluster.local:3100
+  dashboardproviders.yaml: |
+    apiVersion: 1
+    providers:
+    - disableDeletion: false
+      editable: true
+      folder: ""
+      name: default
+      options:
+        path: /var/lib/grafana/dashboards/default
+      orgId: 1
+      type: file
+  download_dashboards.sh: |
+    #!/usr/bin/env sh
+    set -euf
+    mkdir -p /var/lib/grafana/dashboards/default
+  
+    curl -skf \
+    --connect-timeout 60 \
+    --max-time 60 \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json;charset=UTF-8" \
+      "https://raw.githubusercontent.com/making/observability-demo-2023/main/config/grafana/dashboard/spring-boot-dashboard.json" \
+    > "/var/lib/grafana/dashboards/default/spring-boot-dashboard.json"
+---
+# Source: grafana/templates/dashboards-json-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-default
+  namespace: grafana
+  labels:
+    helm.sh/chart: grafana-6.52.7
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/version: "9.4.3"
+    app.kubernetes.io/managed-by: Helm
+    dashboard-provider: default
+data:
+  {}
 ---
 # Source: grafana/templates/clusterrole.yaml
 kind: ClusterRole
@@ -242,8 +281,8 @@ spec:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: grafana
       annotations:
-        checksum/config: 9a9ccdb096ecf5446c819284c26b0bbb17892736d1f3e14cc82544d9c8ad4691
-        checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 54467207a1737096797a529caed9559892ec0b6f53f3b412c61827169509e52f
+        checksum/dashboards-json-config: 8040c3b0173855b50d1587767cac47d7fc2e1349b0960e69a268b44bde1edef7
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/secret: 98420625c560da29f8152e0d2557a1f2e9cc1dae823eb9248f66b05ffa8d3f73
     spec:
@@ -254,6 +293,19 @@ spec:
         fsGroup: 472
         runAsGroup: 472
         runAsUser: 472
+      initContainers:
+        - name: download-dashboards
+          image: "curlimages/curl:7.85.0"
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh"]
+          args: [ "-c", "mkdir -p /var/lib/grafana/dashboards/default && /bin/sh -x /etc/grafana/download_dashboards.sh" ]
+          env:
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/grafana/download_dashboards.sh"
+              subPath: download_dashboards.sh
+            - name: storage
+              mountPath: "/var/lib/grafana"
       enableServiceLinks: true
       containers:
         - name: grafana
@@ -268,6 +320,9 @@ spec:
             - name: config
               mountPath: "/etc/grafana/provisioning/datasources/datasources.yaml"
               subPath: "datasources.yaml"
+            - name: config
+              mountPath: "/etc/grafana/provisioning/dashboards/dashboardproviders.yaml"
+              subPath: "dashboardproviders.yaml"
           ports:
             - name: grafana
               containerPort: 3000
@@ -316,6 +371,9 @@ spec:
         - name: config
           configMap:
             name: grafana
+        - name: dashboards-default
+          configMap:
+            name: grafana-dashboards-default
         - name: storage
           emptyDir: {}
 ---

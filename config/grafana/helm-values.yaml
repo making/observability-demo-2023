@@ -12,6 +12,22 @@ ingress:
     secretName: grafana-tls
   annotations:
     cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+dashboards:
+  default:
+    spring-boot-dashboard:
+      url: https://raw.githubusercontent.com/making/observability-demo-2023/main/config/grafana/dashboard/spring-boot-dashboard.json
 datasources:
   datasources.yaml:
     apiVersion: 1
