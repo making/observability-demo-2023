@@ -2369,7 +2369,7 @@
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Request Count",
+      "title": "Requests Per Second",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2565,7 +2565,7 @@
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Request Count",
+      "title": "Requests Per Second",
       "tooltip": {
         "shared": true,
         "sort": 0,
