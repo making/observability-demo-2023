@@ -78,6 +78,12 @@ kubectl apply -f config/vehicle-api -n vehicle
 Perform a load test
 
 ```
-echo "GET https://vehicle-api.127-0-0-1.sslip.io/vehicles" | vegeta attack  -insecure -duration=180s -rate 10 | tee results.bin | vegeta report
+echo "GET https://vehicle-api.127-0-0-1.sslip.io/vehicles" | vegeta attack  -insecure -duration=180s | tee results.bin | vegeta report
 ```
+
+```
+curl -H "Accept: application/openmetrics-text" -sk https://vehicle-api.127-0-0-1.sslip.io//actuator/prometheus
+```
+
+https://grafana.127-0-0-1.sslip.io/d/spring-boot-dashboard/spring-boot-dashboard?orgId=1&var-cluster=kind&var-namespace=vehicle&var-application=vehicle-api&&var-hikaricp=HikariPool-1&viewPanel=116&from=now-15m&to=now
 
