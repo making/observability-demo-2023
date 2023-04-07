@@ -62,7 +62,7 @@ kubectl create ns grafana-agent
 kubectl apply -f config/grafana-agent/rendered/grafana-agent.yaml
 ```
 
-## Deploy vehicle-api
+## Deploy vehicle-api & vehicle-ui
 
 ```
 kubectl create ns vehicle
@@ -74,11 +74,17 @@ kubectl apply -f config/vehicle-api -n vehicle
 
 * URL: https://vehicle-api.127-0-0-1.sslip.io/swagger-ui/index.html
 
+```
+kubectl apply -f config/vehicle-ui -n vehicle
+```
+
+* URL: https://vehicle-ui.127-0-0-1.sslip.io
+
 
 Perform a load test
 
 ```
-echo "GET https://vehicle-api.127-0-0-1.sslip.io/vehicles" | vegeta attack  -insecure -duration=180s | tee results.bin | vegeta report
+echo "GET https://vehicle-ui.127-0-0-1.sslip.io?name=" | vegeta attack  -insecure -duration=180s | tee results.bin | vegeta report
 ```
 
 ```

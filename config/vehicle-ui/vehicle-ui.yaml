@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vehicle-api
+  name: vehicle-ui
   labels:
-    app.kubernetes.io/part-of: vehicle-api
+    app.kubernetes.io/part-of: vehicle-ui
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/part-of: vehicle-api
+      app.kubernetes.io/part-of: vehicle-ui
   template:
     metadata:
       annotations:
@@ -15,17 +15,16 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/scrape: "true"
       labels:
-        app.kubernetes.io/part-of: vehicle-api
+        app.kubernetes.io/part-of: vehicle-ui
     spec:
       containers:
       - name: workload
-        image: ghcr.io/making/supply-chain/vehicle-api-demo
+        image: ghcr.io/making/supply-chain/vehicle-ui-demo
         env:
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              key: DATABASE_URL
-              name: vehicle-db
+        - name: server.port
+          value: "8080"
+        - name: vehicle.api-url
+          value: http://vehicle-api.vehicle.svc.cluster.local:8080
         - name: management.zipkin.tracing.endpoint
           value: http://grafana-agent.grafana-agent.svc.cluster.local:9411/api/v2/spans
         ports:
@@ -47,12 +46,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vehicle-api
+  name: vehicle-ui
   labels:
-    app.kubernetes.io/part-of: vehicle-api
+    app.kubernetes.io/part-of: vehicle-ui
 spec:
   selector:
-    app.kubernetes.io/part-of: vehicle-api
+    app.kubernetes.io/part-of: vehicle-ui
   ports:
   - targetPort: 8080
     port: 8080
