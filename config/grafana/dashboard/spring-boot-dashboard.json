@@ -2581,7 +2581,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{pod=\"$pod\", app_kubernetes_io_part_of=\"$application\", namespace=\"$namespace\", cluster=\"$cluster\"}[3m])) by (le, method, uri, status))",
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{pod=\"$pod\", app_kubernetes_io_part_of=\"$application\", namespace=\"$namespace\", cluster=\"$cluster\"}[3m])) by (le, method, uri, status)) > 0",
           "legendFormat": "{{method}} [{{status}}] - {{uri}}",
           "range": true,
           "refId": "A"
@@ -2874,7 +2874,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "histogram_quantile(0.99, sum(rate(http_client_requests_seconds_bucket{pod=\"$pod\", app_kubernetes_io_part_of=\"$application\", namespace=\"$namespace\", cluster=\"$cluster\"}[3m])) by (le, method, uri, status))",
+          "expr": "histogram_quantile(0.99, sum(rate(http_client_requests_seconds_bucket{pod=\"$pod\", app_kubernetes_io_part_of=\"$application\", namespace=\"$namespace\", cluster=\"$cluster\"}[3m])) by (le, method, uri, status)) > 0",
           "legendFormat": "{{method}} [{{status}}] - {{uri}}",
           "range": true,
           "refId": "A"
