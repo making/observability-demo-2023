@@ -6,5 +6,5 @@ helm repo update
 ```
 
 ```
-helm template --values helm-values.yaml loki --include-crds -n loki grafana/loki --version 5.0.0 > loki.yaml 
+helm template --values helm-values.yaml loki --include-crds -n loki grafana/loki --version 5.0.0 > rendered/loki.yaml 
 ```
