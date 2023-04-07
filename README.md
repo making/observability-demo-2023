@@ -33,6 +33,9 @@ kubectl create ns prometheus
 kubectl apply -f config/prometheus/rendered/prometheus.yaml -n prometheus
 ```
 
+* URL: https://prometheus.127-0-0-1.sslip.io
+
+
 ```
 kubectl create ns loki
 kubectl apply -f config/grafana-loki/rendered/loki.yaml -n loki
@@ -47,6 +50,10 @@ kubectl apply -f config/grafana-tempo/rendered/tempo.yaml -n tempo
 kubectl create ns grafana
 kubectl apply -f config/grafana/rendered/grafana.yaml -n grafana
 ```
+
+* URL: https://grafana.127-0-0-1.sslip.io
+* username: `grafana`
+* password: `grafana`
 
 ## Deploy Grafana Agent
 
@@ -63,5 +70,14 @@ kubectl create ns vehicle
 
 ```
 kubectl apply -f config/vehicle-api -n vehicle
+```
+
+* URL: https://vehicle-api.127-0-0-1.sslip.io/swagger-ui/index.html
+
+
+Perform a load test
+
+```
+echo "GET https://vehicle-api.127-0-0-1.sslip.io/vehicles" | vegeta attack  -insecure -duration=180s -rate 10 | tee results.bin | vegeta report
 ```
 
