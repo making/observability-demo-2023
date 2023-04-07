@@ -7,7 +7,9 @@ server:
   extraFlags:
   - web.enable-lifecycle
   - web.enable-remote-write-receiver
+  - web.config.file=/etc/config/web.yml
   - enable-feature=exemplar-storage
+  tcpSocketProbeEnabled: true
   baseURL: https://prometheus.127-0-0-1.sslip.io
   ingress:
     enabled: true
@@ -25,6 +27,10 @@ serverFiles:
     - /etc/config/recording_rules.yml
     - /etc/config/alerting_rules.yml
     scrape_configs: [ ]
+  web.yml:
+    basic_auth_users:
+      # the password is also prometheus
+      prometheus: $2a$12$ki3lqLXMZIF0GtYLdmw5VeD3av/r3FxJGDRGslr2oxSEQJOqp4KHm
 alertmanager:
   enabled: false
 kube-state-metrics:

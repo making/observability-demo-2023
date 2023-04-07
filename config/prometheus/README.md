@@ -5,5 +5,5 @@ helm repo update
 ```
 
 ```
-helm template --values helm-values.yaml prometheus --include-crds -n prometheus prometheus-community/prometheus --version 20.2.0 > rendered/prometheus.yaml 
+helm template --values helm-values.yaml prometheus --include-crds -n prometheus prometheus-community/prometheus --version 20.2.0 | ytt -f- -f overlay.yaml > rendered/prometheus.yaml 
 ```

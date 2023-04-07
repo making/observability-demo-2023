@@ -61,6 +61,8 @@ data:
     apiVersion: 1
     datasources:
     - access: proxy
+      basicAuth: true
+      basicAuthUser: prometheus
       editable: true
       isDefault: true
       jsonData:
@@ -71,6 +73,8 @@ data:
         httpMethod: POST
       name: Prometheus
       orgId: 1
+      secureJsonData:
+        basicAuthPassword: prometheus
       type: prometheus
       uid: prometheus
       url: http://prometheus-server.prometheus.svc.cluster.local
@@ -281,7 +285,7 @@ spec:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: grafana
       annotations:
-        checksum/config: 54467207a1737096797a529caed9559892ec0b6f53f3b412c61827169509e52f
+        checksum/config: 422298cc0bab3f2e64741cfa47019fc777e77456e241856e645a84466f3aeab1
         checksum/dashboards-json-config: 8040c3b0173855b50d1587767cac47d7fc2e1349b0960e69a268b44bde1edef7
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/secret: 98420625c560da29f8152e0d2557a1f2e9cc1dae823eb9248f66b05ffa8d3f73

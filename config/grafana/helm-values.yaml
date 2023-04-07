@@ -38,6 +38,8 @@ datasources:
       type: prometheus
       access: proxy
       url: http://prometheus-server.prometheus.svc.cluster.local
+      basicAuth: true
+      basicAuthUser: prometheus
       isDefault: true
       editable: true
       jsonData:
@@ -46,6 +48,8 @@ datasources:
           name: trace_id
           urlDisplayLabel: trace_id
         httpMethod: POST
+      secureJsonData:
+        basicAuthPassword: prometheus
     - name: Loki
       uid: grafana-logs
       type: loki

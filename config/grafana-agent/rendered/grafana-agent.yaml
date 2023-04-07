@@ -101,7 +101,7 @@ spec:
   template:
     metadata:
       annotations:
-        agent-yaml-digest: 3a76553b106134296c1dcb53c80eaf3e
+        agent-yaml-digest: 541236bd9f98ab75acc2dc42ef32223d
       labels:
         name: grafana-agent
     spec:
@@ -191,6 +191,10 @@ data:
       - name: default
         remote_write:
         - url: http://prometheus-server.prometheus.svc.cluster.local/api/v1/write
+          basic_auth:
+            username: prometheus
+            password: prometheus
+          send_exemplars: true
         scrape_configs:
         - job_name: kubernetes-pods
           honor_labels: true

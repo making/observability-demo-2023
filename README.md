@@ -34,7 +34,8 @@ kubectl apply -f config/prometheus/rendered/prometheus.yaml -n prometheus
 ```
 
 * URL: https://prometheus.127-0-0-1.sslip.io
-
+* username: `prometheus`
+* password: `prometheus`
 
 ```
 kubectl create ns loki

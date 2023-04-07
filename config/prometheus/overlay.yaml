@@ -1,0 +1,12 @@
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"name": "prometheus-server"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: prometheus-server-configmap-reload
+        args:
+        #@overlay/match by=lambda indexOrKey, left, right: left.startswith("--reload-url")
+        - --reload-url=http://prometheus:prometheus@127.0.0.1:9090/-/reload
