@@ -94,3 +94,21 @@ curl -H "Accept: application/openmetrics-text" -sk https://vehicle-api.127-0-0-1
 
 https://grafana.127-0-0-1.sslip.io/d/spring-boot-dashboard/spring-boot-dashboard?orgId=1&var-cluster=kind&var-namespace=vehicle&var-application=vehicle-api&&var-hikaricp=HikariPool-1&viewPanel=116&from=now-15m&to=now
 
+
+## How to delete the installation
+
+```
+kubectl delete -f config/vehicle-ui -n vehicle
+kubectl delete -f config/vehicle-api -n vehicle
+kubectl delete -f config/grafana-agent/rendered/grafana-agent.yaml
+kubectl delete -f config/grafana/rendered/grafana.yaml -n grafana
+kubectl delete -f config/grafana-tempo/rendered/tempo.yaml -n tempo
+kubectl delete -f config/grafana-loki/rendered/loki.yaml -n loki
+kubectl delete -f config/prometheus/rendered/prometheus.yaml -n prometheus
+kubectl delete -f https://projectcontour.io/quickstart/contour.yaml
+kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+```
+
+```
+kind delete cluster
+```
